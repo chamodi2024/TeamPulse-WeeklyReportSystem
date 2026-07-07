@@ -1,10 +1,8 @@
 package com.chamodi.weekly_report_backend.controller;
 
-
-
 import com.chamodi.weekly_report_backend.dto.ProjectRequest;
 import com.chamodi.weekly_report_backend.dto.ProjectResponse;
-import com.chamodi.weekly_report_backend.ProjectService;
+import com.chamodi.weekly_report_backend.service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

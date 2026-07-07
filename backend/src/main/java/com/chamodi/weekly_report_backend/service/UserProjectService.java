@@ -23,9 +23,9 @@ public class UserProjectService {
     private final ProjectRepository projectRepository;
 
     public void assignUserToProject(AssignProjectRequest request) {
-        User user = userRepository.findById(request.getUserId())
+        User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        Project project = projectRepository.findById(request.getProjectId())
+        Project project = projectRepository.findById(request.projectId())
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
         boolean alreadyAssigned = userProjectRepository.findByUserId(user.getId())
