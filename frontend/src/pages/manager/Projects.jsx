@@ -6,6 +6,7 @@ import Card from '../../components/common/Card';
 import Modal from '../../components/common/Modal';
 import Loader from '../../components/common/Loader';
 import EmptyState from '../../components/common/EmptyState';
+import AssignMembersModal from '../../components/projects/AssignMembersModal';
 import { getAllProjects, createProject, updateProject, deleteProject } from '../../api/projectApi';
 
 export default function Projects() {
@@ -17,11 +18,22 @@ export default function Projects() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
-  const fetchProjects = () => {
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
+  const [assigningProject, setAssigningProject] = useState(null);
+
+  // Fetch projects strictly from the backend API
+  const fetchProjects = async () => {
     setLoading(true);
-    getAllProjects()
-      .then((res) => setProjects(res.data))
-      .finally(() => setLoading(false));
+    try {
+      const res = await getAllProjects();
+      // Ensure we always set an array
+      setProjects(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Error fetching projects:", err);
+      setProjects([]); // Set to empty on error
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -42,6 +54,11 @@ export default function Projects() {
     setModalOpen(true);
   };
 
+  const openAssignModal = (project) => {
+    setAssigningProject(project);
+    setAssignModalOpen(true);
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -54,7 +71,7 @@ export default function Projects() {
         await createProject(form);
       }
       setModalOpen(false);
-      fetchProjects();
+      fetchProjects(); // Refresh the list
     } catch (err) {
       setError(err.response?.data?.message || 'Could not save project.');
     } finally {
@@ -99,6 +116,7 @@ export default function Projects() {
               </div>
               <h3 className="font-bold text-surface-900 mb-1">{p.name}</h3>
               <p className="text-sm text-gray-500 flex-1 mb-4">{p.description || 'No description'}</p>
+
               <div className="flex gap-2 pt-3 border-t border-surface-100">
                 <Button variant="secondary" size="sm" onClick={() => openEditModal(p)} className="flex-1">
                   Edit
@@ -107,6 +125,14 @@ export default function Projects() {
                   Delete
                 </Button>
               </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => openAssignModal(p)}
+                className="w-full mt-2"
+              >
+                👥 Assign Members
+              </Button>
             </Card>
           ))}
         </div>
@@ -145,6 +171,12 @@ export default function Projects() {
           </Button>
         </form>
       </Modal>
+
+      <AssignMembersModal
+        isOpen={assignModalOpen}
+        onClose={() => setAssignModalOpen(false)}
+        project={assigningProject}
+      />
     </AppLayout>
   );
 }

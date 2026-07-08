@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/projects")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173") // CORS error එක නැතිවෙන්න මේක අනිවාර්යයි
 public class ProjectController {
 
     private final ProjectService projectService;
