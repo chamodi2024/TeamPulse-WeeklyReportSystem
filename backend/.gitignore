@@ -1,10 +1,19 @@
-HELP.md
+# --- Build Output ---
 target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+build/
+bin/
+out/
 
-### STS ###
+# --- Maven ---
+.mvn/wrapper/maven-wrapper.jar
+
+# --- IntelliJ IDEA ---
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# --- Eclipse/STS ---
 .apt_generated
 .classpath
 .factorypath
@@ -13,21 +22,20 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
+# --- VS Code ---
 .vscode/
+
+# --- Operating System Files ---
+.DS_Store
+Thumbs.db
+
+# --- CRITICAL: Security ---
+# This ensures your API keys are never uploaded to GitHub
+src/main/resources/application.properties
+src/main/resources/application-dev.properties
+src/main/resources/application-prod.properties
+
+# If you want to share the structure without the keys, 
+# keep an example file and track that instead:
+!src/main/resources/application.properties.example
+git rm --cached backend/src/main/resources/application.properties

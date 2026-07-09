@@ -38,7 +38,11 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Permit public access to authentication endpoints
                         .requestMatchers("/api/auth/**").permitAll()
+                        // Restrict AI Assistant endpoints to users with the MANAGER role
+                        .requestMatchers("/api/assistant/**").hasRole("MANAGER")
+                        // All other requests require authentication
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

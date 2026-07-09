@@ -1,12 +1,12 @@
 package com.chamodi.weekly_report_backend.repository;
 
-
-
 import com.chamodi.weekly_report_backend.model.ReportStatus;
 import com.chamodi.weekly_report_backend.model.WeeklyReport;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -17,6 +17,8 @@ public interface WeeklyReportRepository extends JpaRepository<WeeklyReport, Long
     List<WeeklyReport> findByUserIdOrderByWeekStartDesc(Long userId);
 
     List<WeeklyReport> findByWeekStartAndWeekEnd(LocalDate weekStart, LocalDate weekEnd);
+
+    List<WeeklyReport> findByProjectId(Long projectId);
 
     @Query("SELECT r FROM WeeklyReport r WHERE " +
             "(:userId IS NULL OR r.user.id = :userId) AND " +
@@ -45,4 +47,14 @@ public interface WeeklyReportRepository extends JpaRepository<WeeklyReport, Long
     @Query("SELECT r.weekStart as weekStart, r.user.name as userName, COUNT(r) as taskCount " +
             "FROM WeeklyReport r GROUP BY r.weekStart, r.user.name ORDER BY r.weekStart ASC")
     List<Object[]> getTaskTrend();
+
+    /**
+     * Updates all weekly reports associated with a specific project by setting
+     * their project reference to null. This prevents foreign key constraint errors
+     * when deleting a project.
+     * * @param projectId The ID of the project being deleted
+     */
+    @Modifying
+    @Query("UPDATE WeeklyReport w SET w.project = null WHERE w.project.id = :projectId")
+    void clearProjectReferences(@Param("projectId") Long projectId);
 }

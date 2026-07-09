@@ -12,20 +12,26 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
+/**
+ * Controller to handle AI-powered interactions for Team Managers.
+ */
 @RestController
 @RequestMapping("/api/assistant")
+@CrossOrigin(origins = "http://localhost:5173") // Ensure this matches your React frontend port
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('MANAGER')") // Restricts all endpoints to users with MANAGER role
+@PreAuthorize("hasRole('MANAGER')")
 public class AiAssistantController {
 
     private final AiAssistantService aiAssistantService;
 
     /**
-     * Endpoint to fetch the AI-generated weekly summary for the team.
-     * Accessible only by Managers.
+     * Fetches a summary of team activity for the specified week.
+     * * @param weekStart Start date of the reporting period
+     * @param weekEnd End date of the reporting period
+     * @return AI-generated summary response
      */
     @GetMapping("/summary")
-    public ResponseEntity<AiSummaryResponse> summary(
+    public ResponseEntity<AiSummaryResponse> getSummary(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStart,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekEnd) {
 
@@ -33,11 +39,12 @@ public class AiAssistantController {
     }
 
     /**
-     * Endpoint for Managers to ask natural language questions about team activity.
-     * Accessible only by Managers.
+     * Processes natural language questions from managers based on report data.
+     * * @param request Contains the question and date range
+     * @return AI-generated answer based on the provided context
      */
     @PostMapping("/ask")
-    public ResponseEntity<AiSummaryResponse> ask(@Valid @RequestBody AiQuestionRequest request) {
+    public ResponseEntity<AiSummaryResponse> askQuestion(@Valid @RequestBody AiQuestionRequest request) {
 
         return ResponseEntity.ok(aiAssistantService.answer(request));
     }
